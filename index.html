@@ -1,0 +1,149 @@
+﻿<!DOCTYPE html>
+<html ng-app="ogrenciModul">
+<head>
+    <meta charset="utf-8" />
+    <style>
+        html {
+            font-size: 12px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+    </style>
+    <title>Öğrenci Mobil</title>
+
+    <link href="lib/kendo/styles/kendo.common.min.css" rel="stylesheet" />
+    <link href="lib/kendo/styles/kendo.default.min.css" rel="stylesheet" />
+    <link href="lib/kendo/styles/kendo.mobile.all.min.css" rel="stylesheet" />
+    <link href="lib/kendo/styles/font-awesome.min.css" rel="stylesheet" />
+    <link href="styles/index.css" rel="stylesheet" />
+</head>
+
+<body id="ogrenciCTRL" ng-controller="ogrenciCTRL" onload="onLoad()">
+
+    <!-- LOGIN EKRANI -->
+    <div data-role="view" data-title="{{langSource.giris}}" id="view-giris" data-persist="true" data-layout="view-header-giris" data-model="app.loginService.viewModel">
+        <ul id="view-giris-ul1" data-role="listview" data-style="inset" data-type="group" class="km-widget km-listview km-listgroupinset">
+            <li><img src="images/business.png" style="text-align:center;"/></li>
+            <li class="km-group-container" style="font-size:1em;color:white;text-align:center;">{{langSource.randevuvearayantakipsistemi}}</li>
+        </ul>
+        <ul id="view-giris-ul2" data-role="listview" data-style="inset" data-type="group" class="km-widget km-listview km-listgroupinset">
+            <li class="km-group-container">
+                <form data-bind="events: { keyup: checkEnter }">
+                    <ul data-role="listview" data-style="inset" data-bind="invisible: isLoggedIn" style="margin:0;">
+                        <li id="login-kullanicisifre" style="border-bottom-color:white;line-height:1em;">
+                            <span class="km-icon km-user-e" style="float:left;margin:1px 0 0 8px;font-size: 1em;"></span>
+                            <input type="text" data-bind="value: Kullanici" placeholder="{{langSource.kullaniciadi}}" style="float:right;width:100%;font-size: 1em;padding-left: 40px;" />
+                            <div class="erroruser" style="top: 5px; display: block;"><span class="fa fa-times"></span></div>
+                        </li>
+                        <li id="login-kullanicisifre" style="border-bottom-color:white;line-height:1em;">
+                            <span class="km-icon km-lock-e" style="float:left;margin:1px 0 0 4px;font-size: 1em;"></span>
+                            <input type="password" data-bind="value: Sifre" placeholder="{{langSource.sifre}}" style="float:right;width:100%;font-size: 1em;padding-left: 40px;" />
+                            <div class="errorpass" style="top: 5px; display: block;"><span class="fa fa-times"></span></div>
+                        </li>
+                        <li id="GirisBasarisiz" style="color:red;"></li>
+                        <li id="login-button">
+                            <div>
+                                <a data-role="button" data-rel="view" data-transition="slide:left" data-bind="click: onLogin, invisible: isLoggedIn" style=" min-width:120px; width:80%;font-size: 1em;">
+                                    {{langSource.giris}}<span class="km-icon km-login-e" style="float:left;margin:2px 0 0 4px;"></span>
+                                </a>
+                            </div>
+                        </li>
+                        <!--<li id="login-button">
+                            <div>
+                                <a data-role="button" data-rel="view" data-transition="slide:left" data-align="left" data-bind="click: onLogin, invisible: isLoggedIn" style=" min-width:105px; width:40%;border-right-color:white;font-size: 1em;">
+                                    {{langSource.giris}}<span class="km-icon km-login-e" style="float:left;margin:2px 0 0 4px;"></span>
+                                </a>
+                                <a data-role="button" data-rel="view" data-transition="slide:right" data-align="left" style="min-width:105px;width:40%;font-size: 1em;" onclick="cikisButton()">
+                                    {{langSource.cikis}}<span class="km-icon km-cancel-e" style="float:left;margin:2px 0 0 4px;"></span>
+                                </a>
+                            </div>
+                        </li>-->
+                    </ul>
+                </form>
+            </li>
+        </ul>
+        <!--
+            <ul data-role="listview" data-style="inset" data-type="group" class="km-widget km-listview km-listgroupinset">
+            <li class="km-group-container">
+                <label id="BeniHatirla" style="font-weight:bold;float: right;">
+                    <input name="ChackBoxBeniHatirla" type="checkbox" value="0" data-bind="checked: CheckBoxSecimData" />
+                    <span style="float: right;">{{langSource.benihatirla}}</span>
+                </label>
+            </li>
+        </ul>
+         -->
+    </div>
+
+    <!-- AYARLAR EKRANI -->
+    <div data-role="view" data-title="{{langSource.ayarlar}}" id="view-ayarlar" data-persist="true" data-layout="view-header-ayarlar" data-model="app.ayarlarService.viewModel">
+        <ul id="view-giris-ul2" data-role="listview" data-style="inset" data-type="group" class="km-widget km-listview km-listgroupinset">
+            <li class="km-group-container">
+                <div class="km-group-title"><div class="km-text">{{langSource.servisipduzenleme}}</div></div>
+                <form>
+                    <ul data-role="listview" data-style="inset" style="margin:0;">
+                        <li id="login-kullanicisifre" style="border-bottom-color:white;height: 30px;">
+                            <input id="mevcutservisip" type="text" data-bind="value: MevcutIP" placeholder="{{langSource.mevcutservisip}}" style="float:right;width:100%;font-size: 1em;" />
+                        </li>
+                        <li id="login-kullanicisifre" style="border-bottom-color:white;height: 30px;">
+                            <input type="text" data-bind="value: YeniIP" placeholder="{{langSource.ipadresinigiriniz}}" style="float:right;width:100%;font-size: 1em;" />
+                        </li>
+                        <li id="login-button" style="text-align:center;">
+                            <div>
+                                <a data-role="button" data-rel="view" data-transition="slide:left" data-align="left" data-bind="click: onSave" style=" min-width:105px; width:40%;border-right-color:white;font-size: 1em;">
+                                    {{langSource.kaydet}}<span class="fa fa-floppy-o" style="float:left;margin:2px 0 0 4px;"></span>
+                                </a>
+                                <a data-role="button" data-rel="view" data-transition="slide:right" data-align="left" style="min-width:105px;width:40%;font-size: 1em;" onclick="iptalButton()">
+                                    {{langSource.iptal}}<span class="km-icon km-cancel-e" style="float:left;margin:2px 0 0 4px;"></span>
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </form>
+            </li>
+        </ul>
+    </div>
+    
+    <div id="giris-layout" data-role="layout" data-id="view-header-giris">
+        <header data-role="header">
+            <div id="giris-layout-header-div" data-role="navbar">
+                <span id="giris-layout-span" class="km-icon km-giris-e" style="margin:10px 0 0 4px;"></span>&nbsp;&nbsp;{{langSource.giris}}
+                <a id="#view-ayarlar-button" data-role="button" data-transition="slide:left" data-align="right" style="margin-top: 6px;width:40px; height:33px;padding:3px 3px 2px 8px; margin-right:10px;" onclick="AyarlarYonlendir()"><span class="fa fa-cog" style="font-size:25px;"></span></a>
+            </div>
+        </header>
+        <footer data-role="footer">
+            <div data-role="footer">
+                <div id="footerDiv1" style="color:white;"><span>www.unipa.com.tr</span></div>
+                <div id="footerDiv2"><img src="images/logobeyaz.png" /></div>
+            </div>
+        </footer>
+    </div>
+    <div id="ayarlar-layout" data-role="layout" data-id="view-header-ayarlar">
+        <header data-role="header">
+            <div data-role="navbar">
+                <a data-role="button" data-rel="view" href="#:back" data-transition="slide:right" data-align="left" style="padding:2px 2px 2px 2px;margin-top: 4px;">
+                    <span class="km-icon km-back-e" style="float:left;margin-top: 3px;margin-right: 8px;"></span>
+                    <img src="images/business_100x100.png" style="width:32px;float:right;height:32px; box-shadow:none;margin:0 0 0 0;" />
+                </a>&nbsp;
+                <span>{{langSource.ayarlar}}</span>
+            </div>
+        </header>
+        <footer data-role="footer">
+            <div data-role="footer">
+                <div id="footerDiv1" style="color:white;"><span>www.unipa.com.tr</span></div>
+                <div id="footerDiv2"><img src="images/logobeyaz.png" /></div>
+            </div>
+        </footer>
+    </div>
+    
+
+    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+    <script src="lib/kendo/js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="lib/kendo/js/angular.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="lib/kendo/js/kendo.all.min.js" type="text/javascript" charset="utf-8"></script>
+
+
+    <script src="scripts/LangResource.js"></script>
+    <script src="scripts/app.js" type="text/javascript" charset="utf-8"></script>
+    <script src="scripts/login.js" type="text/javascript" charset="utf-8"></script>
+    <script src="scripts/DateFormat.js"></script>
+</body>
+</html>

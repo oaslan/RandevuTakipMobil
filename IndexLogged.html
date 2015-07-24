@@ -1,0 +1,1079 @@
+﻿<!DOCTYPE html>
+<html ng-app="ogrenciModul">
+<head>
+    <meta charset="utf-8" />
+    <style>
+        html {
+            font-size: 12px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+    </style>
+    <title>RandevuTakip Mobil</title>
+    <link href="lib/kendo/styles/kendo.common.min.css" rel="stylesheet" />
+    <link href="lib/kendo/styles/kendo.default.min.css" rel="stylesheet" />
+    <link href="lib/kendo/styles/kendo.mobile.all.min.css" rel="stylesheet" />
+    <link href="lib/kendo/styles/font-awesome.min.css" rel="stylesheet" />
+    
+</head>
+<body id="ogrenciCTRL" ng-controller="ogrenciCTRL" onload="onLoad()">
+
+    <!-- RANDEVULAR -->
+    <div id="view-randevular" data-role="view"
+         data-title="{{langSource.randevular}}"
+         data-layout="drawer-layout"
+         data-init="initPullToRefreshScroller">
+        <ul data-role="listview" data-style="inset" data-type="group" class="km-widget km-listview km-listgroupinset">
+            <li class="km-group-container">
+                <div class="km-group-title" style="font-size: .9em;">
+                    <table style="width:100%;">
+                        <tr>
+                            <!--
+                            <td style="width:70%;font-size:.85em;">
+                                <div ng-show="RandevuTipi == 1" class="km-text">{{langSource.resmirandevular}}</div>
+                                <div ng-show="RandevuTipi == 2" class="km-text">{{langSource.ozelrandevular}}</div>
+                            </td>
+                            -->
+                            
+                            <td ng-show="SecilenYonetici.OzelRandevuGorsun == false" style="width:70%;font-size:.85em;">
+                                <div class="km-text">{{langSource.resmirandevular}}</div>
+                            </td>
+                            <td ng-show="SecilenYonetici.OzelRandevuGorsun == true" style="width:100px;">
+                                <ul id="button-group-resmiozelrandevu" data-role="buttongroup" data-select="selectResmiOzelRandevuButton" style="float:right;font-size: 1.6em;">
+                                    <li data-icon="" style="width: 32px; height: 20px;">Resmi</li>
+                                    <li data-icon="" style="width: 32px; height: 20px;">Özel</li>
+                                </ul>
+                            </td>
+                            <td style="width:30%;text-align: right;">
+                                <input ng-show="false" type="date" id="RandevuDatePicker" class="datePicker" style="width:120px;">
+                                <a id="randevu-datepicker-button" data-role="button" data-rel="drawer" style="padding:0;">
+                                    <table>
+                                        <tr>
+                                            <td style="width:80%;">
+                                                <span>{{Tarih}}</span>
+                                            </td>
+                                            <td style="width:20%;">
+                                                <span class="fa fa-calendar"></span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <ul ng-show="Randevular == null || Randevular.length < 1">
+                    <li class="km-group-container">
+                        {{langSource.randevukaydibulunamadi}}
+                    </li>
+                </ul>
+                <ul ng-show="Randevular != null || Randevular.length > 0">
+                    <li ng-repeat="randevu in Randevular">
+                        <a data-role="listview-link" data-transition="slide:left" ng-click="SecilenRandevuDetay(randevu)" class="ng-binding km-listview-link">
+                            <table style="width:100%;padding-right: 10px;">
+                                <tr>
+                                    <td style="width:15%;">
+                                        <span style="background-color:white;border-radius:4px;-webkit-border-radius:4px;color:black;text-align:center;font-size:.8em;padding:.1em .4em .1em;">{{randevu.BaslamaSaati}}</span>
+                                    </td>
+                                    <td style="width:85%;font-size:.8em;color: moccasin;">{{randevu.Yeri | uppercase}}</td>
+                                </tr>
+                                <tr>
+                                    <td style="width:15%;text-align:center;font-size:30px;"><span class="fa fa-clock-o"></span></td>
+                                    <td style="width:85%;font-size:.7em;" ng-style="Set_Color(randevu.KonuRenk)" align="justify">{{ randevu.Konu | uppercase}}</td>
+                                </tr>
+                            </table>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div id="view-randevudetay" data-role="view"
+         data-title="{{langSource.secilenrandevu}}"
+         data-layout="drawer-layout-secilen">
+        <ul data-role="listview" data-style="inset" data-type="group" class="km-widget km-listview km-listgroupinset">
+            <li class="km-group-container">
+                <div class="km-group-title"><div class="km-text">{{langSource.randevudetaybilgileri}}</div></div>
+                <ul class="km-list">
+                    <li>
+                        <table style="width:100%;">
+                            <tr>
+                                <td style="width:15%;text-align:center;">
+                                    <span style="background-color:white;border-radius:4px;-webkit-border-radius:4px;color:black;text-align:center;font-size:.8em;padding:.1em .4em .1em;">{{SecilenRandevu.BaslamaSaati}}</span>
+                                </td>
+                                <td style="width:85%;font-size:.8em;color: moccasin;">{{SecilenRandevu.Yeri | uppercase}}</td>
+                            </tr>
+                        </table>
+                        <table style="width:100%;">
+                            <tr>
+                                <td style="font-size:.7em;" ng-style="Set_Color(SecilenRandevu.KonuRenk)" align="justify">{{ SecilenRandevu.Konu | uppercase}}</td>
+                            </tr>
+                            <tr ng-show="SecilenRandevu.Hatirlatma != ''">
+                                <td style="background-color:white;border-radius:4px;-webkit-border-radius:4px;color:black;text-align:center;font-size:.8em;">
+                                    <span style="text-align:center;">{{langSource.hatirlatma}}</span>
+                                </td>
+                            </tr>
+                            <tr ng-show="SecilenRandevu.Hatirlatma != ''">
+                                <td style="font-size:.7em;">
+                                    {{SecilenRandevu.Hatirlatma}}
+                                </td>
+                            </tr>
+                            <tr ng-show="SecilenRandevu.Aciklama != ''">
+                                <td style="background-color:white;border-radius:4px;-webkit-border-radius:4px;color:black;text-align:center;font-size:.8em;">
+                                    <span style="text-align:center;font-size:.8em;">{{langSource.aciklama}}</span>
+                                </td>
+                            </tr>
+                            <tr ng-show="SecilenRandevu.Aciklama != ''">
+                                <td style="font-size:.7em;">
+                                    {{SecilenRandevu.Aciklama}}
+                                </td>
+                            </tr>
+                        </table>
+                    </li>
+                </ul>
+            </li>
+            <li ng-show="SecilenYonetici.SadeceOkusun == false" class="km-group-container">
+                <div class="km-group-title"><div class="km-text">{{langSource.randevuaciklamaekle}}</div></div>
+                <form>
+                    <ul data-role="listview" data-style="inset" style="margin:0;">
+                        <li id="login-kullanicisifre" style="border-bottom-color:white;height: 30px;">
+                            <input id="secilen-randevu-aciklama-input" type="text" placeholder="{{langSource.burayaaciklamayaziniz}}" style="float:right;width:100%;font-size: 1em;" />
+                        </li>
+                        <li id="login-button" style="text-align:center;">
+                            <div>
+                                <a data-role="button" data-rel="view" data-transition="slide:left"
+                                   data-align="left" style=" min-width:105px; width:40%;border-right-color:white;font-size: 1em;"
+                                   ng-click="SecilenRandevuAciklamaEkle()">
+                                    {{langSource.kaydet}}<span class="fa fa-floppy-o" style="float:left;margin:2px 0 0 4px;"></span>
+                                </a>
+                                <a data-role="button" data-rel="view"
+                                   data-transition="slide:right" data-align="left"
+                                   style="min-width:105px;width:40%;font-size: 1em;"
+                                   onclick="RandevuAciklamaIptalButton()">
+                                    {{langSource.iptal}}<span class="km-icon km-cancel-e" style="float:left;margin:2px 0 0 4px;"></span>
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </form>
+            </li>
+        </ul>
+    </div>
+
+    <!-- ARAYANLAR -->
+    <div id="view-arayanlar" data-role="view"
+         data-title="{{langSource.arayanlar}}"
+         data-layout="drawer-layout"
+         data-init="initPullToRefreshScroller">
+        <ul data-role="listview" data-style="inset" data-type="group" class="km-widget km-listview km-listgroupinset">
+            <li ng-show="Arayanlar != null" class="km-group-container">
+                <div class="km-group-title" style="font-size: .9em;">
+                    <table>
+                        <tr>
+                            <td style="width:70%;font-size:.85em;">
+                                <div class="km-text">{{langSource.arayanlar}}</div>
+                            </td>
+                            <td style="width:30%;">
+                                <input ng-show="false" type="date" id="ArayanDatePicker" class="datePicker" style="width:120px;">
+                                <a id="arayan-datepicker-button" data-role="button" data-rel="drawer" style="padding:0;">
+                                    <table>
+                                        <tr>
+                                            <td style="width:80%;">
+                                                <span>{{Tarih}}</span>
+                                            </td>
+                                            <td style="width:20%;">
+                                                <span class="fa fa-calendar"></span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <ul ng-show="Arayanlar == null || Arayanlar.length < 1">
+                    <li class="km-group-container">
+                        {{langSource.arayankaydibulunamadi}}
+                    </li>
+                </ul>
+                <ul ng-show="Arayanlar != null || Arayanlar.length > 0">
+                    <li ng-repeat="arayan in Arayanlar">
+                        <a data-role="listview-link" data-transition="slide:left" ng-click="SecilenArayanDetay(arayan)" class="ng-binding km-listview-link">
+                            <table style="width:100%;padding-right: 10px;">
+                                <tr>
+                                    <td style="width:15%;">
+                                        <span style="background-color:white;border-radius:4px;-webkit-border-radius:4px;color:black;text-align:center;font-size:.8em;padding:.1em .4em .1em;">{{arayan.AramaSaati}}</span>
+                                    </td>
+                                    <td style="width:85%;font-size:.8em;">{{arayan.ArayanAdi | uppercase}}&nbsp;{{arayan.ArayanSoyadi | uppercase}}</td>
+                                </tr>
+                                <tr>
+                                    <td style="width:15%;text-align:center;font-size:30px;"><span class="fa fa-phone"></span></td>
+                                    <td style="width:85%;font-size:.7em;">{{ arayan.Konu | uppercase}}</td>
+                                </tr>
+                            </table>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div id="view-arayandetay" data-role="view"
+         data-title="{{langSource.secilenarayan}}"
+         data-layout="drawer-layout-secilen">
+        <ul data-role="listview" data-style="inset" data-type="group" class="km-widget km-listview km-listgroupinset">
+            <li class="km-group-container">
+                <div class="km-group-title"><div class="km-text">{{langSource.arayandetaybilgileri}}</div></div>
+                <ul class="km-list">
+                    <li>
+                        <table style="width:100%;">
+                            <tr>
+                                <td style="width:15%;text-align:center;">
+                                    <span style="background-color:white;border-radius:4px;-webkit-border-radius:4px;color:black;text-align:center;font-size:.8em;padding:.1em .4em .1em;">{{SecilenArayan.AramaSaati}}</span>
+                                </td>
+                                <td style="width:85%;font-size:.8em;">
+                                    {{SecilenArayan.ArayanAdi | uppercase}}&nbsp;{{SecilenArayan.ArayanSoyadi | uppercase}} 
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:15%;text-align:center;">
+                                    <span ng-show="SecilenArayan.KonuTuru != ''" style="color:red;text-align:center;font-size:.8em;padding:.1em .4em .1em;">
+                                        {{SecilenArayan.KonuTuru}}<br />
+                                        {{SecilenArayan.Telefon}}
+                                    </span>
+                                </td>
+                                <td style="width:85%;font-size:.8em;" align="justify">
+                                    {{ SecilenArayan.Konu | uppercase}}
+                                </td>
+                            </tr>
+                        </table>
+                        <table style="width:100%;">
+                            <tr ng-show="SecilenArayan.Sonuc != ''">
+                                <td style="background-color:white;border-radius:4px;-webkit-border-radius:4px;color:black;text-align:center;font-size:.8em;">
+                                    <span style="text-align:center;font-size:.8em;">{{langSource.sonuc}}</span>
+                                </td>
+                            </tr>
+                            <tr ng-show="SecilenArayan.Sonuc != ''">
+                                <td style="font-size:.7em;">
+                                    {{SecilenArayan.Sonuc}}
+                                </td>
+                            </tr>
+                        </table>
+                    </li>
+                </ul>
+            </li>
+            <li ng-show="SecilenYonetici.SadeceOkusun == false" class="km-group-container">
+                <div class="km-group-title"><div class="km-text">{{langSource.arayansonucekle}}</div></div>
+                <form>
+                    <ul data-role="listview" data-style="inset" style="margin:0;">
+                        <li id="login-kullanicisifre" style="border-bottom-color:white;height: 30px;">
+                            <input id="secilen-arayan-sonuc-input" type="text" placeholder="{{langSource.burayasonucyaziniz}}" style="float:right;width:100%;font-size: 1em;" />
+                        </li>
+                        <li id="login-button" style="text-align:center;">
+                            <div>
+                                <a data-role="button" data-rel="view" data-transition="slide:left"
+                                   data-align="left" style=" min-width:105px; width:40%;border-right-color:white;font-size: 1em;"
+                                   ng-click="SecilenArayanSonucEkle()">
+                                    {{langSource.kaydet}}<span class="fa fa-floppy-o" style="float:left;margin:2px 0 0 4px;"></span>
+                                </a>
+                                <a data-role="button" data-rel="view"
+                                   data-transition="slide:right" data-align="left"
+                                   style="min-width:105px;width:40%;font-size: 1em;"
+                                   onclick="ArayanSonucIptalButton()">
+                                    {{langSource.iptal}}<span class="km-icon km-cancel-e" style="float:left;margin:2px 0 0 4px;"></span>
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </form>
+            </li>
+        </ul>
+    </div>
+
+    <!-- AJANDA EDITABLE-->
+    <div id="view-ajanda-editable" data-role="view"
+         data-title="{{langSource.ajanda}}"
+         data-layout="drawer-layout"
+         data-init="initPullToRefreshScroller">
+        <div id="SchedulerEditable"></div>
+    </div>
+
+    <!-- AJANDA READONLY-->
+    <div id="view-ajanda-readonly" data-role="view"
+         data-title="{{langSource.ajanda}}"
+         data-layout="drawer-layout"
+         data-init="initPullToRefreshScroller">
+        <div id="SchedulerReadOnly"></div>
+    </div>
+
+    <!-- AYARLAR -->
+    <div id="view-ayarlar" data-role="view"
+         data-title="{{langSource.ayarlar}}"
+         data-layout="drawer-layout-ayarlar">
+        <ul data-role="listview" data-style="inset" data-type="group" class="km-widget km-listview km-listgroupinset">
+            <li class="km-group-container">
+                <div class="km-group-title"><div class="km-text">{{langSource.uygulamaayarlari}}</div></div>
+                <ul class="km-list">
+                    <li style="padding-top:.2em;padding-bottom:.2em;padding-left:0;">
+                        <table>
+                            <tr>
+                                <td style="width:100%;">
+                                    {{langSource.randevutipi}}
+                                </td>
+                                <td style="width:100px;">
+                                    <ul ng-show="SecilenYonetici.OzelRandevuGorsun == false" data-role="buttongroup" style="float:right;font-size: 1.6em;">
+                                        <li data-icon="" style="width: 64px; height: 20px;">Resmi</li>
+                                    </ul>
+                                    <ul ng-show="SecilenYonetici.OzelRandevuGorsun == true" id="button-group-resmiozelrandevu" data-role="buttongroup" data-select="selectResmiOzelRandevuButton" style="float:right;font-size: 1.6em;">
+                                        <li data-icon="" style="width: 32px; height: 20px;">Resmi</li>
+                                        <li data-icon="" style="width: 32px; height: 20px;">Özel</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </table>
+                    </li>
+                </ul>
+            </li>
+            <li class="km-group-container">
+                <div class="km-group-title"><div class="km-text">{{langSource.kullaniciayarlari}}</div></div>
+                <ul class="km-list">
+                    <li>{{langSource.ozellikli}}</li>
+                    <li>{{langSource.ozellikli}}</li>
+                    <li>{{langSource.ozellikli}}</li>
+                    <li>{{langSource.ozellikli}}</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div id="randevutakip-drawer" data-role="drawer"
+         data-views="['view-randevular', 'view-arayanlar', 'view-ajanda-editable', 'view-ajanda-readonly', 'view-ayarlar']"
+         style="width:80%;">
+        <ul data-role="listview" data-style="inset" data-type="group" class="km-widget km-listview km-listgroupinset">
+            <li ng-repeat="yonetici in loginData.Yoneticiler" class="km-group-container">
+                <div class="km-group-title"><div class="km-text" style="font-size:.8em;">{{yonetici.YoneticiAdi}}</div></div>
+                <ul class="km-list">
+                    <li class="km-group-container">
+                        <a data-role="listview-link" data-transition="none" ng-click="DrawerRandevular()" class="ng-binding km-listview-link">
+                            <span class="fa fa-clock-o" style="font-size:20px;"></span>
+                            <span class="km-text">{{langSource.randevular}}</span>
+                        </a>
+                    </li>
+                    <li class="km-group-container">
+                        <a data-role="listview-link" data-transition="none" ng-click="DrawerArayanlar()" class="ng-binding km-listview-link">
+                            <span class="fa fa-phone" style="font-size:20px;"></span>
+                            <span class="km-text">{{langSource.arayanlar}}</span>
+                        </a>
+                    </li>
+                    <li class="km-group-container">
+                        <a data-role="listview-link" data-transition="none" ng-click="DrawerAjandaResmi()" class="ng-binding km-listview-link">
+                            <span class="fa fa-calendar" style="font-size:20px;"></span>
+                            <span ng-show="yonetici.OzelRandevuGorsun == true" class="km-text">{{langSource.resmiajanda}}</span>
+                            <span ng-show="yonetici.OzelRandevuGorsun == false" class="km-text">{{langSource.ajanda}}</span>
+                        </a>
+                    </li>
+                    <li ng-show="yonetici.OzelRandevuGorsun == true" class="km-group-container">
+                        <a data-role="listview-link" data-transition="none" ng-click="DrawerAjandaOzel()" class="ng-binding km-listview-link">
+                            <span class="fa fa-calendar" style="font-size:20px;"></span>
+                            <span class="km-text">{{langSource.ozelajanda}}</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="km-group-container">
+                <div class="km-group-title"><div class="km-text" style="font-size:.8em;">{{langSource.hesap}}</div></div>
+                <ul class="km-list" style="font-size:.9em;">
+                    <!-- 
+                    <li id="view-hesap-ayarlar" data-icon="settings"><a data-transition="none">{{langSource.ayarlar}}</a></li> -->
+                    <li id="view-hesap-oturumukapat" data-icon="off"><a id="Logout" data-transition="none">{{langSource.oturumukapat}}</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div id="randevutakip-drawer-layout" data-role="layout" data-id="drawer-layout">
+        <header data-role="header">
+            <div data-role="navbar">
+                <a data-role="button" data-rel="drawer" href="#randevutakip-drawer" data-align="left" style="padding:2px 2px 2px 2px;margin-top: 8px;">
+                    <span class="fa fa-bars" style="float:left;margin-top:7px;margin-right:6px;"></span>
+                    <img src="images/business_100x100.png" style="width:29px;float:right;height:29px; box-shadow:none;margin:0 0 0 0;" />
+                </a>&nbsp;
+                <span data-role="view-title" data-align="left" style="font-size:.9em;font-weight:bold;"></span>
+
+                <a id="dun-button" data-role="button" data-rel="drawer" data-align="right" style="padding: 2px 14px 2px 2px;width: 40px;height: 33px;">
+                    <span class="km-icon km-back-e" style="font-weight:bold;"></span>
+                </a>
+                <a id="bugun-button" data-role="button" data-rel="drawer" data-align="right" style="padding: 5px 2px 2px 2px;width: 60px;height: 33px;text-align:center;">
+                    <span style="font-weight:bold;font-size:.9em;text-align:center;">{{langSource.bugun}}</span>
+                </a>
+                <a id="yarin-button" data-role="button" data-rel="drawer" data-align="right" style="padding: 2px 14px 2px 2px;width: 40px;height: 33px;">
+                    <span class="km-icon km-forw-e" style="font-weight:bold;"></span>
+                </a>
+            </div>
+        </header>
+    </div>
+    <div id="randevuarayantakip-drawer-layout-detay" data-role="layout" data-id="drawer-layout-secilen">
+        <header data-role="header">
+            <div data-role="navbar">
+                <a data-role="button" data-rel="view" href="#:back" data-transition="slide:right" data-align="left" style="padding:0px 2px 2px 2px;">
+                    <span class="km-icon km-back-e" style="float:left;margin-right:10px;"></span>
+                    <img src="images/business_100x100.png" style="width:29px;float:right;height:29px; box-shadow:none;margin:0 0 0 0;" />
+                </a>&nbsp;
+                <span data-role="view-title" data-align="left" style="font-size:.9em;font-weight:bold;"></span>
+            </div>
+        </header>
+    </div>
+    <div id="ayarlar-drawer-layout" data-role="layout" data-id="drawer-layout-ayarlar">
+        <header data-role="header">
+            <div data-role="navbar">
+                <a data-role="button" data-rel="drawer" href="#randevutakip-drawer" data-align="left" style="padding:2px 2px 2px 2px;margin-top: 8px;">
+                    <span class="fa fa-bars" style="float:left;margin-top:7px;margin-right:6px;"></span>
+                    <img src="images/business_100x100.png" style="width:29px;float:right;height:29px; box-shadow:none;margin:0 0 0 0;" />
+                </a>&nbsp;
+                <span data-role="view-title" data-align="left" style="font-size:.9em;font-weight:bold;"></span>
+            </div>
+        </header>
+    </div>
+
+
+    <script id="scheduler-template" type="text/x-kendo-template" >
+
+        <ul data-role="listview" data-style="inset" data-type="group" class="km-widget km-listview km-listgroupinset">
+            <li class="km-group-container">
+                <ul class="km-list">
+                    <li data-container-for="title">
+                        <table style="width:100%;">
+                            <tr style="width:100%;">
+                                <td style="width:30%;font-size:.8em;">
+                                    <div class="km-group-title"><div class="km-text" style="text-align:center;">Randevu Yeri:</div></div>
+                                </td>
+                                <td class="k-edit-field" style="width:100%;font-size:.8em;">
+                                    <textarea name="title" placeholder="Randevu yerini buraya yazınız..." class="k-textbox" data-bind="value:title"></textarea>
+                                </td>
+                            </tr>
+                        </table>
+                    </li>
+                </ul>
+            </li>
+            <li class="km-group-container">
+                <div class="km-group-title"><div class="km-text" style="font-size:.8em;">Başlama Saati:</div></div>
+                <ul class="km-list" style="font-size:.8em;">
+                    <li data-container-for="start" class="k-edit-field">
+                        <span class="k-widget k-datetimepicker k-header" style="">
+                            <span class="k-picker-wrap k-state-default">
+                                <input id="SchedulerBaslamaSaati" type="text" required="" data-type="date" data-role="datetimepicker" 
+                                       data-bind="value:start,invisible:isAllDay" data-validate="true" name="start" 
+                                       class="k-input" role="combobox" aria-expanded="false" 
+                                       aria-disabled="false" aria-readonly="true" style="width:60%;">
+                                <span class="k-select" style="width:100px;">
+                                    <span class="fa fa-calendar" role="button" style="width:40px;">  </span>
+                                    <span class="fa fa-clock-o" role="button" style="font-size:1.8em;width:40px;"></span>
+                                </span>
+                            </span>
+                        </span>
+                    </li>
+                </ul>
+            </li>
+            <li class="km-group-container">
+                <div class="km-group-title"><div class="km-text" style="font-size:.8em;">Bitiş Saati:</div></div>
+                <ul class="km-list" style="font-size:.8em;">
+                    <li data-container-for="end" class="k-edit-field">
+                        <span class="k-widget k-datetimepicker k-header" style="">
+                            <span class="k-picker-wrap k-state-default">
+                                <input id="SchedulerBitisSaati" type="text" required="" data-type="date" data-role="datetimepicker"
+                                       data-bind="value:end,invisible:isAllDay" data-validate="true" name="end"
+                                       class="k-input" role="combobox" aria-expanded="false"
+                                       aria-disabled="false" aria-readonly="true" style="width:60%;">
+                                <span class="k-select" style="width:100px;">
+                                    <span class="fa fa-calendar" role="button" style="width:40px;">  </span>
+                                    <span class="fa fa-clock-o" role="button" style="font-size:1.8em;width:40px;"></span>
+                                </span>
+                            </span>
+                        </span>
+                    </li>
+                </ul>
+            </li>
+            <li class="km-group-container">
+                <ul class="km-list">
+                    <li data-container-for="description">
+                        <table style="width:100%;">
+                            <tr style="width:100%;">
+                                <td style="width:30%;font-size:.8em;">
+                                    <div class="km-group-title"><div class="km-text" style="text-align:center;">Konu:</div></div>
+                                </td>
+                                <td class="k-edit-field" style="width:100%;font-size:.8em;">
+                                    <textarea name="description" placeholder="Konuyu buraya yazınız..." class="k-textbox" data-bind="value:description"></textarea>
+                                </td>
+                            </tr>
+                        </table>
+                    </li>
+                    <li data-container-for="aciklama">
+                        <table style="width:100%;">
+                            <tr style="width:100%;">
+                                <td style="width:30%;font-size:.8em;">
+                                    <div class="km-group-title"><div class="km-text" style="text-align:center;">Açıklama:</div></div>
+                                </td>
+                                <td class="k-edit-field" style="width:100%;font-size:.8em;">
+                                    <textarea name="aciklama" placeholder="Açıklamanızı buraya yazınız..." class="k-textbox" data-bind="value:aciklama"></textarea>
+                                </td>
+                            </tr>
+                        </table>
+                    </li>
+                    <li data-container-for="adres">
+                        <table style="width:100%;">
+                            <tr style="width:100%;">
+                                <td style="width:30%;font-size:.8em;">
+                                    <div class="km-group-title"><div class="km-text" style="text-align:center;">Adres:</div></div>
+                                </td>
+                                <td class="k-edit-field" style="width:100%;font-size:.8em;">
+                                    <textarea name="adres" placeholder="Adresi buraya yazınız..." class="k-textbox" data-bind="value:adres"></textarea>
+                                </td>
+                            </tr>
+                        </table>
+                    </li>
+                    <li data-container-for="katilimcilar">
+                        <table style="width:100%;">
+                            <tr style="width:100%;">
+                                <td style="width:30%;font-size:.8em;">
+                                    <div class="km-group-title"><div class="km-text" style="text-align:center;">Katılımcılar:</div></div>
+                                </td>
+                                <td class="k-edit-field" style="width:100%;font-size:.8em;">
+                                    <textarea name="katilimcilar" placeholder="Katilimciları buraya yazınız..." class="k-textbox" data-bind="value:katilimcilar"></textarea>
+                                </td>
+                            </tr>
+                        </table>
+                    </li>
+                    <li data-container-for="telefon">
+                        <table style="width:100%;">
+                            <tr style="width:100%;">
+                                <td style="width:30%;font-size:.8em;">
+                                    <div class="km-group-title"><div class="km-text" style="text-align:center;">Telefon:</div></div>
+                                </td>
+                                <td class="k-edit-field" style="width:100%;font-size:.8em;">
+                                    <textarea name="telefon" placeholder="Telefonu buraya yazınız..." class="k-textbox" data-bind="value:telefon"></textarea>
+                                </td>
+                            </tr>
+                        </table>
+                    </li>
+                    <li data-container-for="hatirlatma">
+                        <table style="width:100%;">
+                            <tr style="width:100%;">
+                                <td style="width:30%;font-size:.8em;">
+                                    <div class="km-group-title"><div class="km-text" style="text-align:center;">Hatırlatma:</div></div>
+                                </td>
+                                <td class="k-edit-field" style="width:100%;font-size:.8em;">
+                                    <textarea name="hatirlatma" placeholder="Hatırlatmayı buraya yazınız..." class="k-textbox" data-bind="value:hatirlatma"></textarea>
+                                </td>
+                            </tr>
+                        </table>
+                    </li>
+                    <li data-container-for="talepEden">
+                        <table style="width:100%;">
+                            <tr style="width:100%;">
+                                <td style="width:30%;font-size:.8em;">
+                                    <div class="km-group-title"><div class="km-text" style="text-align:center;">Talep Eden:</div></div>
+                                </td>
+                                <td class="k-edit-field" style="width:100%;font-size:.8em;">
+                                    <textarea name="talepEden" placeholder="Talep edeni buraya yazınız..." class="k-textbox" data-bind="value:talepEden"></textarea>
+                                </td>
+                            </tr>
+                        </table>
+                    </li>
+                    <li>
+                        <table style="width:100%;">
+                            <tr style="width:100%;">
+                                <td style="width:30%;font-size:.8em;">
+                                    <div class="km-group-title"><div class="km-text" style="text-align:center;">&nbsp;&nbsp;</div></div>
+                                </td>
+                                <td style="width:100%;font-size:.8em;">
+                                    &nbsp;&nbsp;&nbsp;&nbsp;
+                                </td>
+                            </tr>
+                        </table>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </script>
+
+    <script id="event-template" type="text/x-kendo-template">
+        <div class="randevu-template" style="width:100%; height:100%;font-size:.7em;">
+            <!--  onclick="EventTemplateFunc(this)" -->
+            <p id="SecilenId" hidden>#: taskId #</p>
+            <h3 style="margin:.2em;font-size: .9em;">#: title #</h3>
+        </div>
+    </script>
+
+    <!-- ICONS -->
+    <style>
+        .km-user-e:after,
+        .km-user-e:before {
+            content: "\e319";
+            font-size: 20px;
+        }
+
+        .km-lock-e:after,
+        .km-lock-e:before {
+            content: "\e0ff";
+            font-size: 26px;
+            align-content: center;
+        }
+
+        .km-login-e:after,
+        .km-login-e:before {
+            content: "\e0b2";
+            font-size: 20px;
+        }
+
+        .km-giris-e:after,
+        .km-giris-e:before {
+            content: "\e219";
+            font-size: 20px;
+        }
+
+        .km-cancel-e:after,
+        .km-cancel-e:before {
+            content: "\e031";
+            font-size: 20px;
+        }
+
+        .km-off-e:after,
+        .km-off-e:before {
+            content: "\e0b9";
+            font-size: 14px;
+            color: white;
+        }
+
+        .km-off:before, 
+        .km-off:after {
+            content: "\E0B9";
+            font-size: 14px;
+        }
+
+        .km-duyuru:after,
+        .km-duyuru:before {
+            content: "\e0b5";
+            font-size: 22px;
+        }
+
+        .km-mezuniyet:after,
+        .km-mezuniyet:before {
+            content: "\f19d";
+            font-size: 22px;
+        }
+
+        .km-info-e:before {
+            content: "\e0f9";
+            font-size: 24px;
+            color: white;
+        }
+
+        .km-info-e:after {
+            content: "\e0f9";
+            font-size: 24px;
+        }
+
+        .km-back-e:before {
+            content: "\e013";
+            font-size:30px;
+            font-weight:bold;
+            color:white;
+        }
+        .km-back-e:after {
+            content: "\e013";
+            font-size:28px;
+            font-weight: bold;
+        }
+
+        .km-forw-e:before {
+            content: "\e010";
+            font-size:30px;
+            font-weight:bold;
+            color:white;
+        }
+        .km-forw-e:after {
+            content: "\e010";
+            font-size:28px;
+            font-weight: bold;
+        }
+
+        .km-calender:before {
+            content: "\e089";
+            font-size:30px;
+            font-weight:bold;
+            color:white;
+        }
+        .km-calender:after {
+            content: "\e089";
+            font-size:28px;
+            font-weight: bold;
+        }
+
+        .fa-graduation-cap:after,
+        .fa-graduation-cap:before,
+        .fa-cutlery:after,
+        .fa-cutlery:before,
+        .fa-calendar:after,
+        .fa-calendar:before,
+        .km-back-e:before {
+            font-size: 20px;
+        }
+
+        .fa-mortar-board:before, 
+        .fa-graduation-cap:before, 
+        .fa-calendar:before,
+        .fa-cutlery:before {
+            float: left;
+        }
+    </style>
+    <style>
+            #button-group-resmiozelrandevu {
+                float: right;
+                margin: 0 0 0 0;
+            }
+
+            #button-group-resmiozelrandevu li {
+                font-size: 0.5em;
+                margin: 0 0 0 0;
+            }
+
+            #button-group-resmiozelrandevu img {
+                width: 32px;
+                height: 20px;
+            }
+        .randevuarayan-konubaslik{
+            background-color:white;
+            border-radius:4px;
+            -webkit-border-radius:4px;
+            color:black;
+            text-align:center;
+            font-size:.8em;
+            padding:.1em .4em .1em;
+        }
+        .km-flat #view-randevular .km-content,
+        .km-flat #view-arayanlar .km-content,
+        .km-flat #view-ayarlar .km-content,
+        .km-flat #view-randevudetay .km-content,
+        .km-flat #view-arayandetay .km-content{
+            background: url(images/aa.jpg) no-repeat center center fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+        }
+
+        .km-flat #view-randevular .km-navbar,
+        .km-flat #view-arayanlar .km-navbar,
+        .km-flat #view-ajanda-editable .km-navbar,
+        .km-flat #view-ajanda-readonly .km-navbar,
+        .km-flat #view-ayarlar .km-navbar,
+        .km-flat #view-randevudetay .km-navbar,
+        .km-flat #view-arayandetay .km-navbar,
+        .km-flat #view-scheduler-edit .km-navbar{
+            background: url(images/pattern9.png) repeat;
+            background-color: inherit;
+            color: #fff;
+            padding-top: 5px;
+        }
+
+        .km-listgroupinset .km-group-title {
+            margin-top: 0em;
+            line-height: 1.4em;
+        }
+
+
+        .km-flat .km-list > li {
+            background: inherit;
+            font-weight: bold;
+        }
+
+        .km-flat #view-randevular .km-listview .km-list > li,
+        .km-flat #view-arayanlar .km-listview .km-list > li,
+        .km-flat #view-ayarlar .km-listview .km-list > li,
+        .km-flat #view-randevudetay .km-listview .km-list > li,
+        .km-flat #view-arayandetay .km-listview .km-list > li{
+            border: none;
+            padding: .5em .1em .3em;
+        }
+
+        .km-footer {
+            background: url(images/pattern9.png) repeat;
+        }
+
+        .km-flat .km-button {
+            background: inherit;
+            border-color: transparent;
+        }
+
+        .km-flat .km-rowinsert, 
+        .km-flat .km-state-active, 
+        .km-flat .km-scroller-pull, 
+        .km-flat .km-loader:before, 
+        .km-flat .k-slider-selection, 
+        .km-flat .km-touch-scrollbar, 
+        .km-flat .km-pages .km-current-page, 
+        .km-flat .k-slider .k-draghandle, 
+        .km-flat .k-slider .k-draghandle:hover, 
+        .km-flat .km-scroller-refresh.km-load-more, 
+        .km-flat .km-popup .k-state-hover, 
+        .km-flat .km-popup .k-state-focused, 
+        .km-flat .km-popup .k-state-selected, 
+        .km-flat .km-actionsheet > li > a:active, 
+        .km-flat .km-actionsheet > li > a:hover, 
+        .km-flat .km-actionsheet > li > .km-state-active, 
+        .km-flat li.km-state-active .km-listview-link, 
+        .km-flat li.km-state-active .km-listview-label, 
+        .km-flat .km-listview-label input[type=radio]:checked, 
+        .km-flat .km-listview-label input[type=checkbox]:checked {
+            background: white;
+            color:#001F3D;
+            font-size:1em;
+        }
+
+        .km-flat .km-loader>*:not(h1), 
+        .km-flat .km-filter-wrap>input, 
+        .km-flat .km-switch-handle.km-state-active, 
+        .km-root .km-flat .km-scroller-refresh span:not(.km-template) {
+            background: #001F3D;
+        }
+
+        .km-flat #view-randevular .km-view-title,
+        .km-flat #view-arayanlar .km-view-title,
+        .km-flat #view-ajanda-editable .km-view-title,
+        .km-flat #view-ajanda-readonly .km-view-title,
+        .km-flat #view-ayarlar .km-view-title,
+        .km-flat #view-randevudetay .km-view-title,
+        .km-flat #view-arayandetay .km-view-title,
+        .km-flat #view-scheduler-edit .km-view-title{
+            font-size:1.2em;
+            line-height:2.3em;
+            font-weight:bold;
+        }
+
+        .km-popup-arrow:after, 
+        .km-popup-arrow:before {
+            display: block;
+            content: "\a0";
+            width: 0px;
+            height: 0px;
+        }
+
+        /*.km-flat:not(.km-on-android) .km-listview-link:after {
+            box-shadow: none;
+        }*/
+
+        /*.km-listview-link:after {
+            border-style: hidden;
+        }*/
+ 
+        .km-flat .km-content {
+            color: white;
+        }
+
+        .km-widget .km-listview-link, 
+        .km-widget .km-listview-label {
+            line-height: 1em;
+        }
+
+        .km-flat .km-list input[type=password], 
+        .km-flat .km-list input[type=search], 
+        .km-flat .km-list input[type=number], 
+        .km-flat .km-list input[type=tel], 
+        .km-flat .km-list input[type=url], 
+        .km-flat .km-list input[type=email], 
+        .km-flat .km-list input[type=month], 
+        .km-flat .km-list input[type=color], 
+        .km-flat .km-list input[type=week], 
+        .km-flat .km-list input[type=date], 
+        .km-flat .km-list input[type=time], 
+        .km-flat .km-list input[type=datetime], 
+        .km-flat .km-list input[type=datetime-local], 
+        .km-flat .km-list input[type=text]:not(.k-input), 
+        .km-flat .km-list select:not([multiple]), 
+        .km-flat .km-list .k-dropdown-wrap, 
+        .km-flat .km-list textarea, 
+        .km-flat .km-list .k-dropdown-wrap .k-input {
+            color: white;
+            margin-top: -10px;
+        }
+
+        /*.km-flat .km-list>li {
+            box-shadow: none;
+            -webkit-box-shadow: none;
+        }*/
+
+        .km-flat #view-randevular ul,
+        .km-flat #view-arayanlar ul,
+        .km-flat #view-ajanda-editable ul,
+        .km-flat #view-ajanda-readonly ul,
+        .km-flat #view-ayarlar ul,
+        .km-flat #view-randevudetay ul,
+        .km-flat #view-arayandetay ul,
+        .km-flat #view-scheduler-edit ul{
+            margin-top:0;
+        }
+    </style>
+
+    <style>
+        /* Agenda View table tr genişliğini düzenler*/
+        /*.k-scheduler-layout, .k-scheduler-table {
+          width: inherit;
+        }*/
+
+
+        .k-state-focused.k-state-selected {
+            -webkit-box-shadow: inset 0 0 3px 4px #001F3D;
+            box-shadow: inset 0 0 3px 4px #001F3D;
+        }
+        .km-flat #randevutakip-drawer .km-widget .km-listview-link{
+            line-height:1.6em;
+        }    
+            
+        .km-flat #randevutakip-drawer .km-content{
+            background: url(images/aa.jpg) no-repeat center center fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+            box-shadow: inset 0 0 10px black;
+            -webkit-box-shadow: inset 0 0 10px black;
+
+        }
+        
+        .km-flat #randevutakip-drawer .km-listview .km-list,
+        .km-flat #view-randevular .km-listview .km-list,
+        .km-flat #view-arayanlar .km-listview .km-list,
+        .km-flat #view-ayarlar .km-listview .km-list,
+        .km-flat #view-randevudetay .km-listview .km-list,
+        .km-flat #view-arayandetay .km-listview .km-list{
+            border-radius: 10px;
+            -webkit-border-radius: 10px;
+            box-shadow: 0 1px 10px black;
+            -webkit-box-shadow: 0 1px 10px black;
+            font-weight: bold;
+            background: url(images/bg-opacity.png) repeat;
+        }
+
+        #randevutakip-drawer h2{
+            line-height: 1.34;
+            text-align: left;
+            display: inline-block;
+            font-size: 0.85em;
+            margin: .2em 0 0 0;
+        }
+
+        #randevutakip-drawer h2 span{
+            display: block;
+            clear: both;
+            font-size: 0.8em;
+            margin: .1em 0 0 0;
+        }
+
+        /*.km-flat #randevutakip-drawer ul{
+            margin-top: 0;
+        }*/
+
+        .k-state-selected{
+              background-color: #001F3D;
+              border-color: #001F3D;
+        }
+        
+    </style>
+
+    <style>
+        /* Scheduler style*/
+        .k-state-selected, .k-state-selected:link, 
+        .k-state-selected:visited, .k-list>.k-state-selected,
+         .k-list>.k-state-highlight, .k-panel>.k-state-selected, 
+        .k-ghost-splitbar-vertical, .k-ghost-splitbar-horizontal, 
+        .k-draghandle.k-state-selected:hover, 
+        .k-scheduler .k-scheduler-toolbar .k-state-selected, 
+        .k-scheduler .k-today.k-state-selected, 
+        .k-marquee-color {
+          color: #fff;
+          background-color: #001F3D;
+          border-color: #001F3D;
+        }
+        .k-scheduler .k-scheduler-toolbar ul li.k-state-hover{
+            color: white;
+            background-color: #001F3D;
+            border-color: #001F3D;
+        }
+        .k-state-hover>.k-link{
+            color:white;
+        }
+
+        .k-event, .k-task-complete {
+          border-color: #001F3D;
+          background: #001F3D;
+          color: white;
+        }
+
+        
+        .km-pane-wrapper .k-mobile-list textarea,
+        .km-pane-wrapper .k-edit-field>*:not([type="checkbox"]):not([type="radio"]):not(.k-button){
+          width: 100%;
+        }
+
+        .km-flat .km-list textarea{
+            color:black;
+        }
+
+        .km-pane-wrapper .k-scheduler-edit-form .km-scroll-container{
+            padding-top:0;
+        }
+
+        .km-list>li {
+          padding: .3em .3em .3em;
+        }
+        .km-flat #randevutakip-drawer .km-list>li{
+              padding: .750em .7em .688em;
+        }
+
+        .km-pane-wrapper .k-mobile-list textarea,
+        .km-pane-wrapper .k-edit-field>*:not([type="checkbox"]):not([type="radio"]):not(.k-button){
+            padding:0;
+        }
+
+        input#SchedulerBitisSaati.k-input,
+        input#SchedulerBaslamaSaati.k-input{
+            width:60%;
+            margin-right: 80px;
+        }
+
+    </style>
+
+    <style>
+        /*Pull Refresh style*/
+        .km-flat .km-scroller-pull{
+            background: white;
+            color: white;
+            font-size: .8em;
+            font-weight:bold;
+        }
+        .km-flat .km-scroller-pull .km-icon{
+            color: #001F3D;
+        }
+        .km-flat .km-loader > *:not(h1),
+        .km-flat .km-filter-wrap > input,
+        .km-flat .km-switch-handle.km-state-active,
+        .km-root .km-flat .km-scroller-refresh span:not(.km-template) {
+            background: #001F3D;
+        }
+    </style>
+
+
+    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+    <script src="lib/kendo/js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="lib/kendo/js/angular.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="lib/kendo/js/kendo.all.min.js" type="text/javascript" charset="utf-8"></script>
+
+    <script src="scripts/LangResource.js"></script>
+    <script src="scripts/app.js" type="text/javascript" charset="utf-8"></script>
+    <script src="scripts/IndexLogged.js" type="text/javascript" charset="utf-8"></script>
+    <script src="scripts/DateFormat.js"></script>
+    <script src="scripts/kendo.culture.tr-TR.js" type="text/javascript"></script>
+    <!--<script src="http://cdn.kendostatic.com/2013.2.716/js/cultures/kendo.culture.tr-TR.min.js" type="text/javascript"></script>-->
+    
+</body>
+</html>

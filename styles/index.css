@@ -1,0 +1,332 @@
+﻿/*Icons*/
+.km-user-e:after,
+.km-user-e:before {
+    content: "\e319";
+    font-size: 20px;
+}
+
+.km-lock-e:after,
+.km-lock-e:before {
+    content: "\e0ff";
+    font-size: 26px;
+    align-content: center;
+}
+
+.km-login-e:after,
+.km-login-e:before {
+    content: "\e0b2";
+    font-size: 20px;
+}
+
+.km-giris-e:after,
+.km-giris-e:before {
+    content: "\e219";
+    font-size: 20px;
+}
+
+.km-cancel-e:after,
+.km-cancel-e:before {
+    content: "\e031";
+    font-size: 20px;
+}
+
+.km-off-e:after,
+.km-off-e:before {
+    content: "\e0b9";
+    font-size: 20px;
+    color: white;
+}
+
+.km-off:before, 
+.km-off:after {
+    content: "\E0B9";
+    font-size: 18px;
+}
+
+.km-duyuru:after,
+.km-duyuru:before {
+    content: "\e0b5";
+    font-size: 22px;
+}
+
+.km-mezuniyet:after,
+.km-mezuniyet:before {
+    content: "\f19d";
+    font-size: 22px;
+}
+
+.km-info-e:before {
+    content: "\e0f9";
+    font-size: 24px;
+    color: white;
+}
+
+.km-info-e:after {
+    content: "\e0f9";
+    font-size: 24px;
+}
+
+.km-back-e:before {
+    content: "\e013";
+    font-size:26px;
+    font-weight:bold;
+    color:white;
+}
+.km-back-e:after {
+    content: "\e013";
+    font-size:22px;
+    font-weight: bold;
+}
+
+.fa-graduation-cap:after,
+.fa-graduation-cap:before,
+.fa-cutlery:after,
+.fa-cutlery:before,
+.fa-calendar:after,
+.fa-calendar:before,
+.km-back-e:before {
+    font-size: 20px;
+}
+
+.fa-mortar-board:before, 
+.fa-graduation-cap:before, 
+.fa-calendar:before,
+.fa-cutlery:before {
+    float: left;
+}
+
+/* Ana Ekran Dil Butonları */
+
+#popover-giris-info{
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-color: #001F3D;
+}
+
+.km-flat #popover-giris-info .km-content{
+    background: url(../images/pattern8.png) repeat;
+    color:#001F3D;
+}
+
+#view-giris-ul1 img {
+    width: 6em;
+    height: 6em;
+    text-align: center;
+    margin-top:40px;
+}
+
+.km-flat #view-giris .km-content,
+.km-flat #view-ayarlar .km-content{
+    background: url(../images/aa.jpg) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+.km-flat #view-giris .km-navbar,
+.km-flat #view-ayarlar .km-navbar{
+    background: url(../images/pattern9.png) repeat;
+    background-color: inherit;
+    color: #fff;
+    padding-top: 5px;
+}
+
+#view-giris {
+    text-align: center;
+}
+
+.km-listgroupinset .km-group-title {
+    margin-top: 0em;
+    line-height: 1.4em;
+}
+
+
+.km-flat .km-list > li {
+    background: inherit;
+    font-weight: bold;
+}
+
+
+.km-flat #view-giris .km-listview .km-list{
+    border-radius: 16px;
+    -webkit-border-radius: 16px;
+    box-shadow: 0 1px 10px white;
+    -webkit-box-shadow: 0 1px 10px white;
+    color: white;
+    background: url(../images/bg-opacity.png) repeat;
+}
+
+.km-flat #view-ayarlar .km-listview .km-list {
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  box-shadow: 0 1px 10px white;
+  -webkit-box-shadow: 0 1px 10px white;
+  color: white;
+  background: url(../images/bg-opacity.png) repeat;
+}
+
+.km-flat #view-giris .km-listview .km-list > li,
+.km-flat #view-ayarlar .km-listview .km-list > li{
+    border: none;
+    padding: .5em .1em .3em;
+}
+
+.km-footer {
+    background: url(../images/pattern9.png) repeat;
+}
+
+.km-flat .km-button {
+    background: inherit;
+    border-color: transparent;
+}
+
+.km-flat .km-rowinsert, 
+.km-flat .km-state-active, 
+.km-flat .km-scroller-pull, 
+.km-flat .km-loader:before, 
+.km-flat .k-slider-selection, 
+.km-flat .km-touch-scrollbar, 
+.km-flat .km-pages .km-current-page, 
+.km-flat .k-slider .k-draghandle, 
+.km-flat .k-slider .k-draghandle:hover, 
+.km-flat .km-scroller-refresh.km-load-more, 
+.km-flat .km-popup .k-state-hover, 
+.km-flat .km-popup .k-state-focused, 
+.km-flat .km-popup .k-state-selected, 
+.km-flat .km-actionsheet > li > a:active, 
+.km-flat .km-actionsheet > li > a:hover, 
+.km-flat .km-actionsheet > li > .km-state-active, 
+.km-flat li.km-state-active .km-listview-link, 
+.km-flat li.km-state-active .km-listview-label, 
+.km-flat .km-listview-label input[type=radio]:checked, 
+.km-flat .km-listview-label input[type=checkbox]:checked {
+    background: white;
+    color:#001F3D;
+    font-size:.95em;
+}
+
+.km-flat .km-loader>*:not(h1), 
+.km-flat .km-filter-wrap>input, 
+.km-flat .km-switch-handle.km-state-active, 
+.km-root .km-flat .km-scroller-refresh span:not(.km-template) {
+    background: #001F3D;
+}
+
+.km-flat #view-giris .km-view-title,
+.km-flat #view-ayarlar .km-view-title{
+    font-size:1.2em;
+    line-height:2.3em;
+    font-weight:bold;
+}
+
+.km-popup-arrow:after, 
+.km-popup-arrow:before {
+    display: block;
+    content: "\a0";
+    width: 0px;
+    height: 0px;
+}
+
+.km-flat:not(.km-on-android) .km-listview-link:after {
+    box-shadow: none;
+}
+
+.km-listview-link:after {
+    border-style: hidden;
+}
+ 
+.km-flat .km-content {
+    color: white;
+}
+
+.km-widget .km-listview-link, 
+.km-widget .km-listview-label {
+    line-height: 1em;
+}
+
+
+#giris-layout-span {
+    display: inline-block;
+}
+
+#footerDiv1 {
+    width: 60%;
+    float: left;
+    text-align: right;
+}
+
+#footerDiv2 {
+    width: 25%;
+    float: right;
+}
+
+#footerDiv2 img {
+    width: 5em;
+    float: right;
+    margin: 0 .4em .3em .4em;
+}
+
+/*.km-flat #view-giris .km-list input[type=text]:not(.k-input),
+.km-flat #view-giris .km-list input[type=password]{
+    color: white;
+    margin-top: -10px;
+}*/
+
+.km-flat .km-list input[type=password], 
+.km-flat .km-list input[type=search], 
+.km-flat .km-list input[type=number], 
+.km-flat .km-list input[type=tel], 
+.km-flat .km-list input[type=url], 
+.km-flat .km-list input[type=email], 
+.km-flat .km-list input[type=month], 
+.km-flat .km-list input[type=color], 
+.km-flat .km-list input[type=week], 
+.km-flat .km-list input[type=date], 
+.km-flat .km-list input[type=time], 
+.km-flat .km-list input[type=datetime], 
+.km-flat .km-list input[type=datetime-local], 
+.km-flat .km-list input[type=text]:not(.k-input), 
+.km-flat .km-list select:not([multiple]), 
+.km-flat .km-list .k-dropdown-wrap, 
+.km-flat .km-list textarea, 
+.km-flat .km-list .k-dropdown-wrap .k-input {
+    color: white;
+    margin-top: -10px;
+}
+
+.km-flat .km-list>li {
+    box-shadow: none;
+    -webkit-box-shadow: none;
+}
+
+.erroruser,
+.errorpass{
+    display: none;
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    right:5px;
+    background: #2d2d2d;
+    background: rgba(45,45,45,.25);
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    background:white;
+}
+
+.erroruser span,
+.errorpass span {
+    display: inline-block;
+    margin-top: 1px;
+    font-size: 25px;
+    font-weight: 500;
+    line-height: 20px;
+    color: black;
+    text-shadow: 0 1px 2px rgba(0,0,0,.1);
+}
+
+.km-flat #view-giris ul,
+.km-flat #view-ayarlar ul{
+    margin-top:0;
+}
